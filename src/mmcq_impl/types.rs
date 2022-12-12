@@ -1,7 +1,8 @@
-use std::fmt::{Debug, Display};
+use serde::{Deserialize, Serialize};
+use std::fmt::{self, Debug, Display, Formatter};
 
 /// A struct representing a color - the output of the palette extraction.
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Color {
     /// The red color channel.
     pub r: u8,
@@ -14,7 +15,21 @@ pub struct Color {
 }
 
 impl Debug for Color {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Color")
+            .field("r", &self.r)
+            .field("g", &self.g)
+            .field("b", &self.b)
+            .field(
+                "hex",
+                &format!("#{:02X}{:02X}{:02X}", self.r, self.g, self.b),
+            )
+            .finish()
+    }
+}
+
+impl Display for Color {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         f.debug_struct("Color")
             .field("r", &self.r)
             .field("g", &self.g)
@@ -76,7 +91,7 @@ impl Pixel {
 }
 
 impl Display for Pixel {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}, {}, {}, {}", self.r, self.g, self.b, self.a)
     }
 }
